@@ -1,0 +1,43 @@
+#!/usr/bin/env php
+<?php
+/**
+ * https://www.doctrine-project.org/projects/doctrine-orm/en/2.6/reference/tools.html
+ */
+
+// if you don't want to setup permissions the proper way, just uncomment the following PHP line
+// read http://symfony.com/doc/current/book/installation.html#configuration-and-setup for more information
+umask(0000);
+set_time_limit(0);
+
+require __DIR__ . '/core/SplLoader.php';
+require __DIR__ . '/../vendor/autoload.php';
+
+use Symfony\Component\Console\Application;
+use Doctrine\ORM\Tools\Console\ConsoleRunner;
+use App\Core\Commands\Initial;
+
+$cli = new Application('MVCEngine Command Line Interface');
+$cli->setCatchExceptions(true);
+$cli->setHelperSet(require_once 'config/cli-config.php');
+
+// Register All Doctrine Commands
+ConsoleRunner::addCommands($cli);
+
+$cli->add(new Initial());
+
+// Register your own command
+if (file_exists('config/commands.php')) {
+    foreach (require 'config/commands.php' as $command) {
+        $command = 'App\\Commands\\' . $command;
+        $path = str_replace('\\', '/', $command . '.php');
+        if (file_exists($path)) {
+            require $path;
+        } else {
+            throw new Exception("Command Class not found: " . $path, 500);
+        }
+        $cli->add(new $command());
+    }
+}
+
+// Runs console application
+$cli->run();

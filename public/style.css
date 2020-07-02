@@ -1,0 +1,23 @@
+.authorize, .register{
+    width: auto;
+    text-align: center;
+}
+
+.authorize label, .register label{
+    display: block;
+    margin-bottom: 10px;
+}
+
+.errors{
+    display:inline-block;
+    color: black;
+    background-color: red;
+    margin-bottom: 10px;
+}
+
+.ok{
+    display:inline-block;
+    color: black;
+    background-color: #03ff06;
+    margin-bottom: 10px;
+}
